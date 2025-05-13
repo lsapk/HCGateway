@@ -1,0 +1,29 @@
+# render.yaml
+services:
+  - type: web
+    name: hcgateway-api
+    runtime: docker               # Utilise votre Dockerfile existant
+    plan: free                    # Plan gratuit
+    repo: https://github.com/VOTRE-NOM/HCGateway  # Remplacez par votre fork
+    branch: main
+    buildCommand: ""             # Non nécessaire pour runtime: docker
+    startCommand: ""             # Non nécessaire pour runtime: docker
+    dockerCommand: docker-compose -f docker-compose.yml up api
+    envVars:
+      - key: FIREBASE_KEY
+        sync: false              # Valeur secrète à renseigner dans l'UI Render
+      - key: MONGO_URI
+        sync: false
+    healthCheckPath: /health     # Si HCGateway expose une route de santé
+    region: frankfurt            # Choisissez la région la plus proche
+
+databases:
+  - name: hcgateway-db
+    type: postgres
+    plan: free
+    region: frankfurt
+    databaseName: hcgateway
+    user: hcgateway_user
+    envVarGroup:
+      - key: DATABASE_URL        # Render génère automatiquement l’URL
+        sync: false
